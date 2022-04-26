@@ -1,4 +1,4 @@
-# import requests
+import requests
 import pandas as pd
 from io import StringIO
 import shutil
@@ -36,4 +36,4 @@ class LoadBalancer:
 
 lb = LoadBalancer()
 ips = ['127.0.0.1', '127.0.0.2']
-lb.updateConfig(ips)        
+lb.updateConfig(ips)
