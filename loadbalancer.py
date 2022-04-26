@@ -27,6 +27,7 @@ class LoadBalancer:
         for i in ips:
             contents += '\n\tserver server'+str(count) +' '+i
             count += 1
+        contents += '\n'
         f.write(contents)
         f.close()
 
@@ -34,5 +35,5 @@ class LoadBalancer:
         shutil.copy('haproxy.cfg', '/etc/haproxy/')
 
 lb = LoadBalancer()
-ips = ['127.0.0.1', '127.0.0.2', '127.0.0.3']
+ips = ['127.0.0.1', '127.0.0.2']
 lb.updateConfig(ips)        
