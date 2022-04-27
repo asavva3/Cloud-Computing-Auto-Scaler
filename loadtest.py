@@ -1,6 +1,7 @@
 import time
 from locust import HttpUser, task, between, events
 import os, shutil
+import numpy as np
 import random
 import string
 
@@ -19,26 +20,27 @@ class QuickstartUser(HttpUser):
 					shutil.rmtree(file_path)
 			except Exception as e:
 				print('Failed to delete %s. Reason: %s' % (file_path, e))
-		numfiles = random.randint(1, 20)
+		numfiles = np.random.randint(1, 20)
 		for i in range(numfiles):
 			print("Generating file")
-			size = random.randint(10, 1500)
+			size = np.random.randint(10, 1500)
 			chars = ''.join([random.choice(string.ascii_letters) for i in range(size)]) #1
 			filename = folder+'/testfile'+str(i)+'.txt'
 			with open(filename, 'w') as f:
 				f.write(chars)
 
-	@task
+	@task(3)
 	def view_items(self):
 		response = self.client.get("")
-		for item_id in response.json():
-			print("Getting item:"+item_id)
-			response = self.client.get(f"/objs/{item_id}")
-			time.sleep(1)
+		if len(response.json()) == 0 or not isinstance(response.json(), list):
+			return
+		choice = np.random.choice(response.json(), replace = False)
+		response = self.client.get(f"/objs/{choice}")
+		time.sleep(1)
 			
-	@task
+	@task(3)
 	def put_item(self):
-		file = random.choice(os.listdir("testfiles"))
+		file = np.random.choice(os.listdir("testfiles"))
 		f = open("testfiles/"+file)
 		content = f.read()
 		response = self.client.put('/objs/'+file, {'content': content})
@@ -46,10 +48,11 @@ class QuickstartUser(HttpUser):
 	@task
 	def delete_item(self):
 		response = self.client.get("")
-		if len(response.json()) > 0:
-			choice = random.choice(response.json())
-			print("Deleting item:"+choice)
-			r = self.client.delete("/objs/"+choice)
+		if len(response.json()) == 0 or not isinstance(response.json(), list):
+			return
+		choice = np.random.choice(response.json(), replace = False)
+		r = self.client.delete("/objs/"+choice)
 
 	def on_start(self):
 	    	self.client.get("")
+        
