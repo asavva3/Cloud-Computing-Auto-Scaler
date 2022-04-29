@@ -20,6 +20,7 @@ class Scaling:
         avg_resp_time = df['rtime']
         max_resp_time = df['rtime_max']
 
+        # if req_rate > session rate container (ena pou cracharei kai ena pou den gia na testaroume)
         # cpu
         # if response time is over 130 and we measure that each of our container servers around 4-5 connections,
         # increase containers
