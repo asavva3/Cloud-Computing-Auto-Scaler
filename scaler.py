@@ -17,6 +17,7 @@ class Scaling:
             print("Container created successfully!", container.id)  
 
     def deleteCont(self, n_containers):
+        
         containers = self.client.containers.list()
         n_curr = len(containers)
         ids = []
