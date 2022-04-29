@@ -14,6 +14,7 @@ class Scaling:
             created = self.client.containers.create("webapp", "", mounts=[{"type": "bind", "source": "/srv/objects", "target": "/data"}], detach = True)
             container = self.client.containers.get(created.id)
             container.start()
+            container.wait(condition = 'running')
             print("Container created successfully!", container.id)  
 
     def deleteCont(self, n_containers):

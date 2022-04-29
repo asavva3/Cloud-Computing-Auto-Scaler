@@ -25,7 +25,7 @@ class LoadBalancer:
         f = open("haproxy.cfg", "w")
         count = 0
         for i in ips:
-            contents += '\n\tserver server'+str(count) +' '+i
+            contents += '\n\tserver server'+str(count) +' '+i+":5000"
             count += 1
         contents += '\n'
         f.write(contents)
