@@ -24,7 +24,7 @@ for i in range(3):
         f.write(str(elapsed)+"\t")
     f.write(np.mean(times))
     f.write("\n")
-    sc.deleteCont(0)
+    sc.deleteCont(10)
 
 # check for individual container
 times = []
@@ -38,7 +38,7 @@ for i in range(10):
     elapsed = end_time - start_time
     times.append(elapsed)
     f.write(str(elapsed)+"\t")
-    sc.deleteCont(0)
+    sc.deleteCont(10)
 
 f.write(np.mean(times)+"\n")
 f.close()
