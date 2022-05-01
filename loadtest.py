@@ -31,11 +31,11 @@ class QuickstartUser(HttpUser):
 
 	@task(3)
 	def view_items(self):
-		response = self.client.get("")
+		response = self.client.get("", name="getall")
 		if len(response.json()) == 0 or not isinstance(response.json(), list):
 			return
 		choice = np.random.choice(response.json(), replace = False)
-		response = self.client.get(f"/objs/{choice}")
+		response = self.client.get(f"/objs/{choice}", name="getfile")
 		time.sleep(1)
 			
 	@task(3)
@@ -43,7 +43,7 @@ class QuickstartUser(HttpUser):
 		file = np.random.choice(os.listdir("testfiles"))
 		f = open("testfiles/"+file)
 		content = f.read()
-		response = self.client.put('/objs/'+file, {'content': content})
+		response = self.client.put('/objs/'+file, {'content': content}, name="putfile")
 
 	@task
 	def delete_item(self):
@@ -54,5 +54,5 @@ class QuickstartUser(HttpUser):
 		r = self.client.delete("/objs/"+choice)
 
 	def on_start(self):
-	    	self.client.get("")
+	    	self.client.get("", name="getall")
         
