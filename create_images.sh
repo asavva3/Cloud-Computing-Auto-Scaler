@@ -32,3 +32,6 @@ buildah commit $wa wait
 buildah rename $container webappcontainer
 buildah rename $hap haproxycontainer
 buildah rename $wa waitcontainer
+
+podman run -d --rm --name wait wait
+podman run -d --network container:wait --rm haproxyimg
