@@ -14,7 +14,7 @@ buildah commit $container webapp
 hap=$(buildah from alpine)
 buildah run $hap -- apk update
 buildah run $hap -- apk add haproxy
-buildah copy $hap haproxy.cfg /etc/haproxy/haproxy.cfg
+buildah copy $hap defaulthap.cfg /etc/haproxy/haproxy.cfg
 buildah config --cmd "" $hap
 buildah config --entrypoint "haproxy -f /etc/haproxy/haproxy.cfg" $hap
 buildah commit $hap haproxyimg
