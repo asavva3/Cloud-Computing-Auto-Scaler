@@ -5,17 +5,20 @@ from io import StringIO
 import shutil
 import os
 from podman import PodmanClient
+from multiprocessing import Process
 
 
 class LoadBalancer:
     
-    def __init__(self, uri) -> None:
-        self.uri = uri + "/stats;csv"
+    def __init__(self) -> None:
         self.client = PodmanClient(base_url="unix:///run/podman/podman.sock")
         cont_list = self.client.containers.list(filters={'ancestor': 'localhost/haproxyimg'})
         self.current = None
         if len(cont_list) > 0:
             self.current = self.client.containers.get(cont_list[0].id)
+        self.current.wait(condition='running')
+        ip = self.current.attrs['NetworkSettings']['Networks']['podman']['IPAddress']
+        self.uri = "http://"+ip+":9999/stats;csv"
 
     def getStatistics(self):
         response = requests.get(self.uri)
@@ -24,7 +27,7 @@ class LoadBalancer:
             print("Error")
             exit()
         results = response.text
-        df = pd.read_csv(StringIO(results), ",")
+        df = pd.read_csv(filepath_or_buffer=StringIO(results), sep=",")
         return df
 
     def updateConfig(self, ips):
@@ -67,7 +70,3 @@ class LoadBalancer:
         self.current.stop()
         self.current = created
         return True
-
-
-lb = LoadBalancer("http://127.0.0.1:9999")
-lb.switchHaproxy()

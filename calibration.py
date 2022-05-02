@@ -8,6 +8,8 @@ users=[10, 20, 40, 80]
 
 client = PodmanClient(base_url="unix:///run/podman/podman.sock")
 
+os.system(f'buildah copy webappcontainer monitory.py ')
+
 for u in users:
     for i in range(len(rand_delay_min)):
         for j in range(len(req_per_seq)):
@@ -19,7 +21,7 @@ for u in users:
             c = client.containers.get(container.id)
             ip = c.attrs['NetworkSettings']['Networks']['podman']['IPAddress']
             os.system(f'''podman exec -it {created.id} nohup python3 monitor.py &''')
-            os.system(f"locust -f test.py -u {u} -r 5 -t1m --headless --csv=example -H http://{ip}:5000")
+            os.system(f"locust -f loadtest.py -u {u} -r 5 -t1m --headless --csv=example -H http://{ip}:5000")
             os.system(f"mv example_stats.csv results/{u}users{rand_delay_min[i]}min{rand_delay_max[i]}max{j}req_stats.csv")
             os.system(f"mv example_failures.csv results/{u}users{rand_delay_min[i]}min{rand_delay_max[i]}max{j}req_failures.csv")
             os.system(f"podman cp {created.id}:/monitor.txt results/monitor/monitor{u}users{rand_delay_min[i]}min{rand_delay_max[i]}max{j}.txt")
